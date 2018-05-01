@@ -12,6 +12,9 @@ import java.util.*;
 public class BasicOpmp implements BasicOp {
     @Resource
    private StopTermMapper stopp;
+     public List<StopTerm> getStudentsById(int StudentsId) {
+        return stopp.selectLike("asd");
+    }
     @Override
     public HashMap<String, ArrayList<String>> addOp(String stra, ArrayList<String> lista, String strb, ArrayList<String> listb) {
         ArrayList<String> resultlist=new ArrayList<String>();
