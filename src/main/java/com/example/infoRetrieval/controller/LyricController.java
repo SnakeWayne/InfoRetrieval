@@ -13,8 +13,8 @@ import javax.annotation.Resource;
 public class LyricController {
     @Resource
     private RetrievalService retrievalService;
-    @RequestMapping("/home")
 
+    @RequestMapping("/home")
     @ResponseBody
     public String toIndex(){
         return "hello world";
