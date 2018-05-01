@@ -2,6 +2,8 @@ package com.example.infoRetrieval.dao;
 
 import com.example.infoRetrieval.pojo.StopTerm;
 import com.example.infoRetrieval.pojo.StopTermExample;
+
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 
@@ -61,5 +63,5 @@ public interface StopTermMapper {
      * @mbggenerated Tue May 01 12:51:09 CST 2018
      */
     int updateByExample(@Param("record") StopTerm record, @Param("example") StopTermExample example);
-     List<StopTerm> selectLike(@Param("a")String a);
+    ArrayList<StopTerm> selectAll();
 }

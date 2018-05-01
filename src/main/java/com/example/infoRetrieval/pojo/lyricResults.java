@@ -1,6 +1,13 @@
 package com.example.infoRetrieval.pojo;
 
 public class lyricResults {
+    public lyricResults(String word,String fileName){
+        this.word=word;
+        this.fileName=fileName;
+    }
+    public lyricResults(){
+
+    }
     public void setWord(String word) {
         this.word = word;
     }

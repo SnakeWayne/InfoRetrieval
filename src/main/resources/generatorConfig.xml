@@ -25,7 +25,7 @@
         </javaClientGenerator>
 
         <!-- 生成sql语句的 库和表-->
-        <table schema="db_ir" tableName="stop_term"/>
+        <table schema="db_ir" tableName="stemmer"/>
 
 
     </context>
