@@ -4,15 +4,16 @@ import com.example.infoRetrieval.pojo.lyricResults;
 import com.example.infoRetrieval.service.BasicOp;
 import com.example.infoRetrieval.dao.*;
 import org.hibernate.mapping.Collection;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.util.*;
 @Service
 public class BasicOpmp implements BasicOp {
-    @Resource
-   private StopTermMapper stopp;
-     public List<StopTerm> getStudentsById(int StudentsId) {
+    @Autowired
+    private StopTermMapper stopp;
+    public List<StopTerm> getStudentsById(int StudentsId) {
         return stopp.selectLike("asd");
     }
     @Override
@@ -140,19 +141,19 @@ public class BasicOpmp implements BasicOp {
 
         return null;
     }
-    public static void main(String[] args){
-        BasicOpmp temp=new BasicOpmp();
-        ArrayList<String> a=new ArrayList<String>();
-        ArrayList<String> b=new ArrayList<String>();
-        a.add("a");
-        a.add("b");
-        a.add("d");
-        b.add("a");
-        b.add("b");
-        b.add("d");
-        b.add("asd");
-        System.out.println(temp.notAndOp("a",a,"b",b).get("ab~&"));
-
-
-    }
+//    public static void main(String[] args){
+//        BasicOpmp temp=new BasicOpmp();
+//        ArrayList<String> a=new ArrayList<String>();
+//        ArrayList<String> b=new ArrayList<String>();
+//        a.add("a");
+//        a.add("b");
+//        a.add("d");
+//        b.add("a");
+//        b.add("b");
+//        b.add("d");
+//        b.add("asd");
+//        System.out.println(temp.notAndOp("a",a,"b",b).get("ab~&"));
+//
+//
+//    }
 }
