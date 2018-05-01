@@ -20,5 +20,12 @@ public class LyricController {
         return "hello world";
     }
 
+    @RequestMapping("/lyric")
+    @ResponseBody
+    public String getRetrievalResults(String param) {
+
+        return null;
+    }
+
 }
 
