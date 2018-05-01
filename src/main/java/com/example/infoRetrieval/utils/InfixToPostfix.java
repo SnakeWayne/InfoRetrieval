@@ -93,7 +93,7 @@ public class InfixToPostfix {
     }
 
 //    public static void main(String[] args) {
-//        String a = "abc & ( dge | ~ ppp ) & dge";
+//        String a = "~ ( abc & ( dge | ~ ppp ) & dge )";
 //        String[] re = convertTo(a);
 //        for (int i = 0; i < re.length; i++)
 //            System.out.println(re[i]);
