@@ -13,9 +13,11 @@ import java.util.*;
 @Service
 public class BasicOpmp implements BasicOp {
     @Resource
-
     private StemmerMapper stemmermapper;
+    @Resource
     private StopTermMapper stoptermmapper;
+
+
 
     @Override
     public HashMap<String, ArrayList<String>> andOp(String stra, ArrayList<String> lista, String strb, ArrayList<String> listb) {
@@ -255,6 +257,7 @@ public class BasicOpmp implements BasicOp {
 
     @Override
     public ArrayList<lyricResults> multiNotAnd(String[] str) {
+
         ArrayList<StopTerm> stops=stoptermmapper.selectAll();
         ArrayList<String> stopterms=new ArrayList<String>();
 
@@ -319,6 +322,7 @@ public class BasicOpmp implements BasicOp {
 
     @Override
     public ArrayList<lyricResults> multiOp(String[] str) {
+        Stemmer stemmer=new Stemmer();
         ArrayList<StopTerm> stops=stoptermmapper.selectAll();
         ArrayList<String> stopterms=new ArrayList<String>();
         //停词表需要处理
@@ -384,30 +388,32 @@ public class BasicOpmp implements BasicOp {
 
 
                //成功取到ab，接下来判断是否需要查数据库
-                if(stopterms.contains(a)){
+                if(stopterms.contains(a.toUpperCase())){
                    lista=new ArrayList<String>();
                 }
                 else {
                     if (all.containsKey(a)) {
                         lista = all.get(a);
                     } else {
-                        list_a = stemmermapper.blurSelect(a.toUpperCase());
+                        list_a = stemmermapper.blurSelect(stemmer.getResult(a));
                         for (int i = 0; i < list_a.size(); i++) {
                             lista.add(list_a.get(i).getDoc());
                         }
                     }
                 }
-                if(stopterms.contains(b)){
+                if(stopterms.contains(b.toUpperCase())){
                     listb=new ArrayList<String>();
                 }
                 else {
                     if (all.containsKey(b)) {
                         listb = all.get(b);
                     } else {
-                        list_b = stemmermapper.blurSelect(b.toUpperCase());
-
+                        list_b = stemmermapper.blurSelect(stemmer.getResult(b));
                         for (int i = 0; i < list_b.size(); i++) {
-                            listb.add(list_b.get(i).getDoc());
+                            System.out.println(i);
+                            BeforeIndex temp = list_b.get(i);
+                            String temp2 = temp.getDoc();
+                            listb.add(temp2);
                         }
                     }
                 }
@@ -448,34 +454,34 @@ public class BasicOpmp implements BasicOp {
         return result;
     }
 
-    public static void main(String[] args){
-        BasicOpmp temp=new BasicOpmp();
-        ArrayList<String> a=new ArrayList<String>();
-        ArrayList<String> b=new ArrayList<String>();
-        a.add("1.1");
-        a.add("5.1");
-
-        b.add("5.1");
-       ;
-        System.out.println(temp.orOp("a",a,"b",b).get("ab|"));
-        HashMap<String,ArrayList<String>> all=new HashMap<String,ArrayList<String>>();
-        all.put("a",a);
-        all.put("b",b);
-        List<Map.Entry<String, ArrayList<String>>> list = new ArrayList<Map.Entry<String, ArrayList<String>>>(all.entrySet());
-
-
-// 然后通过比较器来实现排序
-        Collections.sort(list, new Comparator<Map.Entry<String, ArrayList<String>>>() {
-            @Override
-            public int compare(Map.Entry<String, ArrayList<String>> o1, Map.Entry<String, ArrayList<String>> o2) {
-                // return 0;  // 降序
-                // return o2.getValue().compareTo(o1.getValue()); // 降序
-                return o1.getValue().size()-o2.getValue().size(); // 升序
-            }
-        });
-
-        for (Map.Entry<String, ArrayList<String>> mapping : list) {
-            System.out.println(mapping.getKey() + ":" + mapping.getValue());
-        }
-    }
+//    public static void main(String[] args){
+//        BasicOpmp temp=new BasicOpmp();
+//        ArrayList<String> a=new ArrayList<String>();
+//        ArrayList<String> b=new ArrayList<String>();
+//        a.add("1.1");
+//        a.add("5.1");
+//
+//        b.add("5.1");
+//       ;
+//        System.out.println(temp.orOp("a",a,"b",b).get("ab|"));
+//        HashMap<String,ArrayList<String>> all=new HashMap<String,ArrayList<String>>();
+//        all.put("a",a);
+//        all.put("b",b);
+//        List<Map.Entry<String, ArrayList<String>>> list = new ArrayList<Map.Entry<String, ArrayList<String>>>(all.entrySet());
+//
+//
+//// 然后通过比较器来实现排序
+//        Collections.sort(list, new Comparator<Map.Entry<String, ArrayList<String>>>() {
+//            @Override
+//            public int compare(Map.Entry<String, ArrayList<String>> o1, Map.Entry<String, ArrayList<String>> o2) {
+//                // return 0;  // 降序
+//                // return o2.getValue().compareTo(o1.getValue()); // 降序
+//                return o1.getValue().size()-o2.getValue().size(); // 升序
+//            }
+//        });
+//
+//        for (Map.Entry<String, ArrayList<String>> mapping : list) {
+//            System.out.println(mapping.getKey() + ":" + mapping.getValue());
+//        }
+//    }
 }

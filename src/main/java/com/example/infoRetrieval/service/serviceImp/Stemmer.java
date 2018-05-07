@@ -66,6 +66,17 @@ public class Stemmer
      */
     public String toString() { return new String(b,0,i_end); }
 
+    public  String getResult(String str){
+        str=str.toLowerCase();
+        for(int i=0;i<str.length();i++){
+            add(str.charAt(i));
+        }
+        stem();
+        String result=toString().toUpperCase();
+        flush();
+        return  result;
+    }
+
     /**
      * Returns the length of the word resulting from the stemming process.
      */
@@ -343,12 +354,7 @@ public class Stemmer
     {
         char[] w = new char[501];
         Stemmer s = new Stemmer();
-        String xx=new String("FRIENDS");
-        for(int i=0;i<xx.length();i++){
-            s.add(xx.charAt(i));
-        }
-        s.stem();
-        System.out.println(s.toString());
+       System.out.println(s.getResult("ARE"));
 
     }
 }
