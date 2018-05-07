@@ -61,4 +61,6 @@ public interface RawMapper {
      * @mbggenerated Tue May 01 12:50:14 CST 2018
      */
     int updateByExample(@Param("record") Raw record, @Param("example") RawExample example);
+    List<Raw> getAll();
+    List<Raw> selectByPrimary(@Param("key")String key);
 }
