@@ -160,6 +160,12 @@
       <include refid="Example_Where_Clause" />
     </if>
   </select>
+    <select id="getAll" resultType="com.example.infoRetrieval.pojo.Raw">
+      SELECT * FROM raw;
+    </select>
+  <select id="selectByPrimary" resultType="com.example.infoRetrieval.pojo.Raw">
+    SELECT * from raw WHERE term = #{key};
+  </select>
   <update id="updateByExampleSelective" parameterType="map">
     <!--
       WARNING - @mbggenerated
