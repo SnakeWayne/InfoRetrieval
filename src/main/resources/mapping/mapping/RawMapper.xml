@@ -166,6 +166,19 @@
   <select id="selectByPrimary" resultType="com.example.infoRetrieval.pojo.Raw">
     SELECT * from raw WHERE term = #{key};
   </select>
+
+  <select id="getDocNum" resultType="com.example.infoRetrieval.pojo.TermDoc">
+    select term, count(DISTINCT doc) as 'docNum' from raw group by term;
+   </select>
+
+  <select id="getTermFreq" resultType="com.example.infoRetrieval.pojo.TermFrequence">
+    select term, doc , count(term) as 'freq' from raw group by term, doc;
+  </select>
+
+  <select id="getDocCount" resultType="java.lang.Integer">
+    select count(distinct doc) from raw;
+  </select>
+
   <update id="updateByExampleSelective" parameterType="map">
     <!--
       WARNING - @mbggenerated
