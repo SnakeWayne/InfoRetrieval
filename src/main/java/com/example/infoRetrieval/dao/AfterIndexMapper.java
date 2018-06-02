@@ -93,4 +93,5 @@ public interface AfterIndexMapper {
      * @mbggenerated Tue May 01 12:50:14 CST 2018
      */
     int updateByPrimaryKey(AfterIndex record);
+    List<AfterIndex> selectAll();
 }
