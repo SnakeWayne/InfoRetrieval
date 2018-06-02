@@ -30,7 +30,7 @@ public class LyricController {
     @RequestMapping("/home")
     @ResponseBody
     public String toIndex(HttpServletResponse response) throws IOException {
-        response.sendRedirect("/static/index.html");
+        response.sendRedirect("/index.html");
         return "hello world";
     }
 

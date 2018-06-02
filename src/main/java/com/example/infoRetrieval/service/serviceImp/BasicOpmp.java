@@ -12,9 +12,10 @@ import java.util.*;
 
 @Service
 public class BasicOpmp implements BasicOp {
-    @Resource
 
+    @Resource
     private StemmerMapper stemmermapper;
+    @Resource
     private StopTermMapper stoptermmapper;
 
     @Override
