@@ -18,7 +18,7 @@ public class BasicOpmp implements BasicOp {
     private StopTermMapper stoptermmapper;
 
 
-
+    //lista 文件列表
     @Override
     public HashMap<String, ArrayList<String>> andOp(String stra, ArrayList<String> lista, String strb, ArrayList<String> listb) {
         ArrayList<String> resultlist=new ArrayList<String>();
@@ -396,6 +396,7 @@ public class BasicOpmp implements BasicOp {
                         lista = all.get(a);
                     } else {
                         list_a = stemmermapper.blurSelect(stemmer.getResult(a));
+                        lista= new ArrayList<String>();
                         for (int i = 0; i < list_a.size(); i++) {
                             lista.add(list_a.get(i).getDoc());
                         }
