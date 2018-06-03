@@ -1,8 +1,6 @@
 package com.example.infoRetrieval.service;
 
-import com.example.infoRetrieval.pojo.Smoothdou;
-import com.example.infoRetrieval.pojo.Smoothsingle;
-import com.example.infoRetrieval.pojo.lyricResults;
+import com.example.infoRetrieval.pojo.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,8 +16,10 @@ public interface BasicOp {
     public ArrayList<lyricResults> multiOp(String[] str);
     public HashMap<String,Double> rankPLM(String[] str);
     public Double singleP(String doc,String[] query);//内部方法
-    public double getsinglec(String str, List<Smoothsingle> list);//内部方法
-    public double getdoublec(Pair pair, List<Smoothdou> list);//内部方法
+   // public double getsinglec(String str, List<Smoothsingle> list);//内部方法
+    //public double getdoublec(Pair pair, List<Smoothdou> list);//内部方法
+    public double getsinglec(String str, List<BeforeIndex> list);//内部方法
+    public double getdoublec(Pair pair, List<Countdou> list);//内部方法
 
 
 }

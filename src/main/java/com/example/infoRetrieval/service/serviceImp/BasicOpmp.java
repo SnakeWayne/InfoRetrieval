@@ -477,7 +477,9 @@ public class BasicOpmp implements BasicOp {
 
     @Override
     public Double singleP(String doc,String[] query) {
-
+        for(int i=0;i<query.length;i++){
+            query[i]=query[i].toUpperCase();
+        }
         ArrayList<Pair> bigram=new ArrayList<Pair>();
         for(int i=1;i<query.length;i++){
             Pair temp=new Pairmp();
@@ -498,20 +500,30 @@ public class BasicOpmp implements BasicOp {
 //        List<BeforeIndex> singlelist = beforeindexmapper.selectByExample(singleexample);
 //        ArrayList<Integer>  Nsingle=new ArrayList<Integer>();
 //        ArrayList<Integer>  N=new ArrayList<Integer>();
-
-        SmoothdouExample douexam=new SmoothdouExample();
-        SmoothdouExample.Criteria criteria=douexam.createCriteria();
-        criteria.andDocEqualTo(doc);
-        List<Smoothdou> doulist=smoothdoumapper.selectByExample(douexam);
-
-        SmoothsingleExample singlexam=new SmoothsingleExample();
-        SmoothsingleExample.Criteria criteria1=singlexam.createCriteria();
+//此版本为失败的平滑处理版本，出现的数值很怪异
+//        SmoothdouExample douexam=new SmoothdouExample();
+//        SmoothdouExample.Criteria criteria=douexam.createCriteria();
+//        criteria.andDocEqualTo(doc);
+//        List<Smoothdou> doulist=smoothdoumapper.selectByExample(douexam);
+//
+//        SmoothsingleExample singlexam=new SmoothsingleExample();
+//        SmoothsingleExample.Criteria criteria1=singlexam.createCriteria();
+//        criteria1.andDocEqualTo(doc);
+//        List<Smoothsingle> singlelist=smoothsinglemapper.selectByExample(singlexam);
+        BeforeIndexExample singlexam=new BeforeIndexExample();
+        BeforeIndexExample.Criteria criteria1=singlexam.createCriteria();
         criteria1.andDocEqualTo(doc);
-        List<Smoothsingle> singlelist=smoothsinglemapper.selectByExample(singlexam);
+        List<BeforeIndex> singlelist=beforeindexmapper.selectByExample(singlexam);
+
+        CountdouExample   douexam=new CountdouExample();
+        CountdouExample.Criteria criteria=douexam.createCriteria();
+        criteria.andDocEqualTo(doc);
+        List<Countdou> doulist=countdoumapper.selectByExample(douexam);
         Double score=0.0;
         for(int i=0;i<bigram.size();i++){
                 if(i==0){
-                    score=score+Math.log(getsinglec(bigram.get(i).getWi1(),singlelist));
+                    continue;
+                   // score=score+Math.log(getsinglec(bigram.get(i).getWi1(),singlelist));
                 }
                 else{
                     score=score+Math.log(getdoublec(bigram.get(i),doulist)/getsinglec(bigram.get(i).getWi1(),singlelist));
@@ -565,7 +577,7 @@ public class BasicOpmp implements BasicOp {
     }
 
     @Override
-    public double getsinglec(String str, List<Smoothsingle> list) {
+    public double getsinglec(String str, List<BeforeIndex> list) {
         double nul=0;
         for(int i=0;i<list.size();i++){
             if(list.get(i).getTerm().equals(str)){
@@ -581,7 +593,7 @@ public class BasicOpmp implements BasicOp {
     }
 
     @Override
-    public double getdoublec(Pair pair, List<Smoothdou> list) {
+    public double getdoublec(Pair pair, List<Countdou> list) {
         double nul=0;
         for(int i=0;i<list.size();i++){
             if(list.get(i).getWi1().equals(pair.getWi1())&&list.get(i).getWi().equals(pair.getWi())){
