@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.infoRetrieval.pojo.RankResult;
 import com.example.infoRetrieval.pojo.Raw;
 import com.example.infoRetrieval.pojo.lyricResults;
+import com.example.infoRetrieval.service.LyricsService;
 import com.example.infoRetrieval.service.RetrievalService;
 import com.example.infoRetrieval.service.SimilarityCalculate;
 import com.example.infoRetrieval.service.StartOrEndWildCardQuery;
@@ -30,8 +31,8 @@ public class LyricController {
     private StartOrEndWildCardQuery wildCardQuery;
     @Resource
     private SimilarityCalculate similarityCalculate;
-
-
+    @Resource
+    private LyricsService lyricsService;
     @Resource
     private BasicOpmp basicOpmp;
 
@@ -141,6 +142,8 @@ public class LyricController {
 
         if (searchToken.length > 0) {
 
+            Map<String, String> lyrics = lyricsService.getLyrics();
+
             HashMap<String, Double> plm = basicOpmp.rankPLM(searchToken);
             Iterator iter = plm.entrySet().iterator();
 
@@ -149,7 +152,7 @@ public class LyricController {
                 Map.Entry entry = (Map.Entry) iter.next();
                 if ((double)entry.getValue() == 0)
                     continue;
-                rankResults.add(new RankResult(entry.getKey(), entry.getValue()));
+                rankResults.add(new RankResult(entry.getKey(), entry.getValue(), lyrics.get(entry.getKey())));
             }
 
             //排序比较器
