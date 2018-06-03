@@ -18,6 +18,10 @@ public class BasicOpmp implements BasicOp {
     private CountdouMapper countdoumapper;
     @Resource
     private BeforeIndexMapper beforeindexmapper;
+    @Resource
+    private SmoothsingleMapper smoothsinglemapper;
+    @Resource
+    private SmoothdouMapper smoothdoumapper;
 
 
     //lista 文件列表
@@ -459,12 +463,22 @@ public class BasicOpmp implements BasicOp {
 
     @Override
     public HashMap<String, Double> rankPLM(String[] str) {
-
-        return null;
+        HashMap<String, Double> result=new HashMap<String, Double>();
+        BeforeIndexExample example = new BeforeIndexExample();
+        List<BeforeIndex> doulist=beforeindexmapper.selectByExample(example);
+        TreeSet<String> docnames=new TreeSet<String>();
+        for(int i=0;i<doulist.size();i++){
+                docnames.add(doulist.get(i).getDoc());
+        }
+        for (String doc : docnames) {
+            result.put(doc,singleP(doc,str));
+        }
+        return result;
     }
 
     @Override
     public Double singleP(String doc,String[] query) {
+
         ArrayList<Pair> bigram=new ArrayList<Pair>();
         for(int i=1;i<query.length;i++){
             Pair temp=new Pairmp();
@@ -473,61 +487,114 @@ public class BasicOpmp implements BasicOp {
             bigram.add(temp);
         }
 
-        CountdouExample example = new CountdouExample();
-        CountdouExample.Criteria criteria = example.createCriteria();
+//        CountdouExample example = new CountdouExample();
+//        CountdouExample.Criteria criteria = example.createCriteria();
+//        criteria.andDocEqualTo(doc);
+//        example.setOrderByClause("wi1 asc,wi asc");
+//        List<Countdou> countlist = countdoumapper.selectByExample(example);
+//        BeforeIndexExample singleexample = new BeforeIndexExample();
+//        BeforeIndexExample.Criteria singlecriteria = singleexample.createCriteria();
+//        singlecriteria.andDocEqualTo(doc);
+
+//        List<BeforeIndex> singlelist = beforeindexmapper.selectByExample(singleexample);
+//        ArrayList<Integer>  Nsingle=new ArrayList<Integer>();
+//        ArrayList<Integer>  N=new ArrayList<Integer>();
+
+        SmoothdouExample douexam=new SmoothdouExample();
+        SmoothdouExample.Criteria criteria=douexam.createCriteria();
         criteria.andDocEqualTo(doc);
-        example.setOrderByClause("wi1 asc,wi asc");
-        List<Countdou> countlist = countdoumapper.selectByExample(example);
-        BeforeIndexExample singleexample = new BeforeIndexExample();
-        BeforeIndexExample.Criteria singlecriteria = singleexample.createCriteria();
-        singlecriteria.andDocEqualTo(doc);
+        List<Smoothdou> doulist=smoothdoumapper.selectByExample(douexam);
 
-        List<BeforeIndex> singlelist = beforeindexmapper.selectByExample(singleexample);
-        ArrayList<Integer>  Nsingle=new ArrayList<Integer>();
-        ArrayList<Integer>  N=new ArrayList<Integer>();
-        for(int i=0;i<=query.length;i++){
-            N.add(0);
-        }
-        Comparator c = new Comparator<Pair>() {
-            @Override
-            public int compare(Pair o1, Pair o2) {
-                if(o1.getWi1().equals(o2.getWi1()))
-                return o1.getWi().compareTo(o2.getWi());
-                else
-                    return o1.getWi1().compareTo(o2.getWi1());
-            }
-        };
-        bigram.sort(c);
-
-        for(int i=0,j=0;i<bigram.size()&&j<countlist.size();){
-                if((bigram.get(i).getWi1().equals(countlist.get(j).getWi1()))&&(bigram.get(i).getWi().equals(countlist.get(j).getWi()))){
-                    int num=countlist.get(j).getFreq();
-                    N.set(num,N.get(num)+1);
-                    i++;
-                    j++;
+        SmoothsingleExample singlexam=new SmoothsingleExample();
+        SmoothsingleExample.Criteria criteria1=singlexam.createCriteria();
+        criteria1.andDocEqualTo(doc);
+        List<Smoothsingle> singlelist=smoothsinglemapper.selectByExample(singlexam);
+        Double score=0.0;
+        for(int i=0;i<bigram.size();i++){
+                if(i==0){
+                    score=score+Math.log(getsinglec(bigram.get(i).getWi1(),singlelist));
                 }
                 else{
-                    if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))>0){
-                        j++;
-                    }
-                    if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))<0){
-                        N.set(0,N.get(0)+1);
-                        i++;
-                    }
-                    if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))==0){
-                        if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))>0){
-                            j++;
-                        }
-                        else{
-                            N.set(0,N.get(0)+1);
-                            i++;
-                        }
-                    }
+                    score=score+Math.log(getdoublec(bigram.get(i),doulist)/getsinglec(bigram.get(i).getWi1(),singlelist));
                 }
         }
 
 
-        return null;
+//        for(int i=0;i<=query.length;i++){
+//            N.add(0);
+//        }
+//        Comparator c = new Comparator<Pair>() {
+//            @Override
+//            public int compare(Pair o1, Pair o2) {
+//                if(o1.getWi1().equals(o2.getWi1()))
+//                return o1.getWi().compareTo(o2.getWi());
+//                else
+//                    return o1.getWi1().compareTo(o2.getWi1());
+//            }
+//        };
+//        bigram.sort(c);
+//
+//        for(int i=0,j=0;i<bigram.size()&&j<countlist.size();){
+//                if((bigram.get(i).getWi1().equals(countlist.get(j).getWi1()))&&(bigram.get(i).getWi().equals(countlist.get(j).getWi()))){
+//                    int num=countlist.get(j).getFreq();
+//                    N.set(num,N.get(num)+1);
+//                    i++;
+//                    j++;
+//                }
+//                else{
+//                    if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))>0){
+//                        j++;
+//                    }
+//                    if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))<0){
+//                        N.set(0,N.get(0)+1);
+//                        i++;
+//                    }
+//                    if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))==0){
+//                        if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))>0){
+//                            j++;
+//                        }
+//                        else{
+//                            N.set(0,N.get(0)+1);
+//                            i++;
+//                        }
+//                    }
+//                }
+//        }
+
+
+        return score;
+    }
+
+    @Override
+    public double getsinglec(String str, List<Smoothsingle> list) {
+        double nul=0;
+        for(int i=0;i<list.size();i++){
+            if(list.get(i).getTerm().equals(str)){
+                return list.get(i).getFreq();
+            }
+            if(list.get(i).getTerm().equals("null")){
+                nul=list.get(i).getFreq();
+            }
+
+        }
+
+        return nul;
+    }
+
+    @Override
+    public double getdoublec(Pair pair, List<Smoothdou> list) {
+        double nul=0;
+        for(int i=0;i<list.size();i++){
+            if(list.get(i).getWi1().equals(pair.getWi1())&&list.get(i).getWi().equals(pair.getWi())){
+                return list.get(i).getFreq();
+            }
+            if(list.get(i).getWi1().equals("null")&&list.get(i).getWi().equals("null")){
+                nul=list.get(i).getFreq();
+            }
+
+        }
+
+        return nul;
     }
 
 //    public static void main(String[] args){

@@ -1,9 +1,12 @@
 package com.example.infoRetrieval.service;
 
+import com.example.infoRetrieval.pojo.Smoothdou;
+import com.example.infoRetrieval.pojo.Smoothsingle;
 import com.example.infoRetrieval.pojo.lyricResults;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public interface BasicOp {
     public HashMap<String,ArrayList<String>> andOp(String stra,ArrayList<String> lista,String strb,ArrayList<String> listb);
@@ -14,7 +17,9 @@ public interface BasicOp {
     public ArrayList<lyricResults> multiNotAnd(String[] str);
     public ArrayList<lyricResults> multiOp(String[] str);
     public HashMap<String,Double> rankPLM(String[] str);
-    public Double singleP(String doc,String[] query);
+    public Double singleP(String doc,String[] query);//内部方法
+    public double getsinglec(String str, List<Smoothsingle> list);//内部方法
+    public double getdoublec(Pair pair, List<Smoothdou> list);//内部方法
 
 
 }

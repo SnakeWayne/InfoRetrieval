@@ -27,6 +27,8 @@
         <!-- 生成sql语句的 库和表-->
         <table schema="db_ir" tableName="stemmer"/>
         <table schema="db_ir" tableName="countdou"/>
+        <table schema="db_ir" tableName="smoothsingle"/>
+        <table schema="db_ir" tableName="smoothdou"/>
 
     </context>
 
