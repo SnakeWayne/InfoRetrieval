@@ -103,9 +103,31 @@ public class LyricController {
         return retrievalService.getDocLocation(terms);
     }
 
+    @RequestMapping("/similarity")
+    @ResponseBody
+    public List<Double> docSimilarity(@RequestBody String param) {
+
+        //解析参数
+        JSONObject jo = new JSONObject();
+        Map<String, String> m = (Map<String, String> )jo.parse(param);
+
+        String doc1 = m.get("doc1");
+        String doc2 = m.get("doc2");
+
+        double w = similarityCalculate.getSimilarityFromW(doc1, doc2);
+        double wf = similarityCalculate.getSimilarityFromWF(doc1, doc2);
+
+        List<Double> re = new ArrayList<>(2);
+        re.add(w);
+        re.add(wf);
+
+        return re;
+    }
+
+
     @RequestMapping("/plmSearch")
     @ResponseBody
-    public List<RankResult> PLMSearch(String param) {
+    public List<RankResult> PLMSearch(@RequestBody String param) {
 
         //解析参数，并转成大写
         JSONObject jo = new JSONObject();
@@ -125,6 +147,8 @@ public class LyricController {
 
             while (iter.hasNext()) {
                 Map.Entry entry = (Map.Entry) iter.next();
+                if ((double)entry.getValue() == 0)
+                    continue;
                 rankResults.add(new RankResult(entry.getKey(), entry.getValue()));
             }
 
@@ -140,6 +164,7 @@ public class LyricController {
             };
             rankResults.sort(c);
         }
+
 
         return rankResults;
     }
