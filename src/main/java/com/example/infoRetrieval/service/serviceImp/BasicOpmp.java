@@ -153,10 +153,10 @@ public class BasicOpmp implements BasicOp {
             if(stopterms.contains(term)){
                 continue;
             }
-            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
-            for(int i=0;i<list.size();i++){
-                     temp.add(list.get(i).getDoc());
-            }
+           // ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
+//            for(int i=0;i<list.size();i++){
+//                     temp.add(list.get(i).getDoc());
+//            }
             all.put(term,temp);
         }
 
@@ -217,10 +217,10 @@ public class BasicOpmp implements BasicOp {
             }
             ArrayList<String> temp=new ArrayList<String>();
 
-            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
-            for(int i=0;i<list.size();i++){
-                temp.add(list.get(i).getDoc());
-            }
+            //ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
+//            for(int i=0;i<list.size();i++){
+//                temp.add(list.get(i).getDoc());
+//            }
             all.put(term,temp);
         }
 
@@ -282,10 +282,10 @@ public class BasicOpmp implements BasicOp {
             }
             ArrayList<String> temp=new ArrayList<String>();
 
-            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
-            for(int i=0;i<list.size();i++){
-                temp.add(list.get(i).getDoc());
-            }
+            //ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
+//            for(int i=0;i<list.size();i++){
+//                temp.add(list.get(i).getDoc());
+//            }
             all.put(term,temp);
         }
 
@@ -401,7 +401,7 @@ public class BasicOpmp implements BasicOp {
                     if (all.containsKey(a)) {
                         lista = all.get(a);
                     } else {
-                        list_a = stemmermapper.blurSelect(stemmer.getResult(a));
+                        //list_a = stemmermapper.blurSelect(stemmer.getResult(a));
                         lista= new ArrayList<String>();
                         for (int i = 0; i < list_a.size(); i++) {
                             lista.add(list_a.get(i).getDoc());
@@ -415,7 +415,7 @@ public class BasicOpmp implements BasicOp {
                     if (all.containsKey(b)) {
                         listb = all.get(b);
                     } else {
-                        list_b = stemmermapper.blurSelect(stemmer.getResult(b));
+                        //list_b = stemmermapper.blurSelect(stemmer.getResult(b));
                         for (int i = 0; i < list_b.size(); i++) {
                             System.out.println(i);
                             BeforeIndex temp = list_b.get(i);
@@ -512,7 +512,8 @@ public class BasicOpmp implements BasicOp {
         Double score=0.0;
         for(int i=0;i<bigram.size();i++){
                 if(i==0){
-                    score=score+Math.log(getsinglec(bigram.get(i).getWi1(),singlelist));
+                    continue;
+                    //score=score+Math.log(getsinglec(bigram.get(i).getWi1(),singlelist));
                 }
                 else{
                     score=score+Math.log(getdoublec(bigram.get(i),doulist)/getsinglec(bigram.get(i).getWi1(),singlelist));
