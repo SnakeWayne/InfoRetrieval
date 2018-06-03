@@ -1,10 +1,8 @@
 package com.example.infoRetrieval.service.serviceImp;
-import com.example.infoRetrieval.pojo.BeforeIndex;
-import com.example.infoRetrieval.pojo.StopTerm;
-import com.example.infoRetrieval.pojo.lyricResults;
+import com.example.infoRetrieval.pojo.*;
 import com.example.infoRetrieval.service.BasicOp;
 import com.example.infoRetrieval.dao.*;
-import org.hibernate.mapping.Collection;
+import com.example.infoRetrieval.service.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -16,6 +14,10 @@ public class BasicOpmp implements BasicOp {
     private StemmerMapper stemmermapper;
     @Resource
     private StopTermMapper stoptermmapper;
+    @Resource
+    private CountdouMapper countdoumapper;
+    @Resource
+    private BeforeIndexMapper beforeindexmapper;
 
 
     //lista 文件列表
@@ -453,6 +455,79 @@ public class BasicOpmp implements BasicOp {
             }
         }
         return result;
+    }
+
+    @Override
+    public HashMap<String, Double> rankPLM(String[] str) {
+
+        return null;
+    }
+
+    @Override
+    public Double singleP(String doc,String[] query) {
+        ArrayList<Pair> bigram=new ArrayList<Pair>();
+        for(int i=1;i<query.length;i++){
+            Pair temp=new Pairmp();
+            temp.setWi1(query[i-1]);
+            temp.setWi(query[i]);
+            bigram.add(temp);
+        }
+
+        CountdouExample example = new CountdouExample();
+        CountdouExample.Criteria criteria = example.createCriteria();
+        criteria.andDocEqualTo(doc);
+        example.setOrderByClause("wi1 asc,wi asc");
+        List<Countdou> countlist = countdoumapper.selectByExample(example);
+        BeforeIndexExample singleexample = new BeforeIndexExample();
+        BeforeIndexExample.Criteria singlecriteria = singleexample.createCriteria();
+        singlecriteria.andDocEqualTo(doc);
+
+        List<BeforeIndex> singlelist = beforeindexmapper.selectByExample(singleexample);
+        ArrayList<Integer>  Nsingle=new ArrayList<Integer>();
+        ArrayList<Integer>  N=new ArrayList<Integer>();
+        for(int i=0;i<=query.length;i++){
+            N.add(0);
+        }
+        Comparator c = new Comparator<Pair>() {
+            @Override
+            public int compare(Pair o1, Pair o2) {
+                if(o1.getWi1().equals(o2.getWi1()))
+                return o1.getWi().compareTo(o2.getWi());
+                else
+                    return o1.getWi1().compareTo(o2.getWi1());
+            }
+        };
+        bigram.sort(c);
+
+        for(int i=0,j=0;i<bigram.size()&&j<countlist.size();){
+                if((bigram.get(i).getWi1().equals(countlist.get(j).getWi1()))&&(bigram.get(i).getWi().equals(countlist.get(j).getWi()))){
+                    int num=countlist.get(j).getFreq();
+                    N.set(num,N.get(num)+1);
+                    i++;
+                    j++;
+                }
+                else{
+                    if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))>0){
+                        j++;
+                    }
+                    if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))<0){
+                        N.set(0,N.get(0)+1);
+                        i++;
+                    }
+                    if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))==0){
+                        if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))>0){
+                            j++;
+                        }
+                        else{
+                            N.set(0,N.get(0)+1);
+                            i++;
+                        }
+                    }
+                }
+        }
+
+
+        return null;
     }
 
 //    public static void main(String[] args){
