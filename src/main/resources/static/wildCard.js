@@ -1,6 +1,6 @@
 function search() {
     var str = $("#search-input").val();
-    var url = "/InfoRetrieval/lyric";
+    var url = "/InfoRetrieval/wildCardSearch";
     var json_data = {"keywords": str};
     $.ajax({
         type:'post',
@@ -19,9 +19,9 @@ function showLyric(data) {
     $("#result").remove()
     var addf = '<div id = "result">';
     for (var i = 0; i < data.length; i ++) {
-        var fileName = data[i].fileName;
-        var words = data[i].word;
-        addf += '<h4>' +words+ ":\t "+fileName +'</h4>';
+        var fileName = data[i].doc;
+        var terms = data[i].term;
+        addf += '<h4>' + terms +":\t   "+ fileName +'</h4>';
     }
     addf += '</div>'
     $("#baseline").after(addf);

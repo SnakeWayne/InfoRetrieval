@@ -5,7 +5,7 @@
         "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
 
 <generatorConfiguration>
-    <classPathEntry location="C:\Users\hp\.m2\repository\mysql\mysql-connector-java\5.1.29\mysql-connector-java-5.1.29.jar" />
+    <classPathEntry location="E:\eclipse\eclipse\plugins\mysql-connector-java-5.1.26-bin.jar" />
     <context id="context1" targetRuntime="MyBatis3">
         <jdbcConnection driverClass="com.mysql.jdbc.Driver"
                          connectionURL="jdbc:mysql://47.100.163.219:3306/db_ir?useUnicode=true&amp;characterEncoding=UTF-8"
@@ -26,7 +26,7 @@
 
         <!-- 生成sql语句的 库和表-->
         <table schema="db_ir" tableName="stemmer"/>
-
+        <table schema="db_ir" tableName="countdou"/>
 
     </context>
 

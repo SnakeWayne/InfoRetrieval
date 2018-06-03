@@ -13,6 +13,8 @@ public interface BasicOp {
     public ArrayList<lyricResults> multiOr(String[] str);
     public ArrayList<lyricResults> multiNotAnd(String[] str);
     public ArrayList<lyricResults> multiOp(String[] str);
+    public HashMap<String,Double> rankPLM(String[] str);
+    public Double singleP(String doc,String[] query);
 
 
 }

@@ -80,7 +80,17 @@ public class InfixToPostfix {
             postfixStr[k] = tempp;
             k ++;
         }
-        return postfixStr;
+        ArrayList<String> re = new ArrayList<>();
+        for (int i = 0; i < postfixStr.length; i ++) {
+            String temp = postfixStr[i];
+            if (temp !=null)
+                re.add(temp);
+        }
+        String[] ress = new String[re.size()];
+        for (int i = 0; i < ress.length; i ++) {
+            ress[i] = re.get(i);
+        }
+        return ress;
     }
 
     //是否出栈

@@ -1,10 +1,8 @@
 package com.example.infoRetrieval.service.serviceImp;
-import com.example.infoRetrieval.pojo.BeforeIndex;
-import com.example.infoRetrieval.pojo.StopTerm;
-import com.example.infoRetrieval.pojo.lyricResults;
+import com.example.infoRetrieval.pojo.*;
 import com.example.infoRetrieval.service.BasicOp;
 import com.example.infoRetrieval.dao.*;
-import org.hibernate.mapping.Collection;
+import com.example.infoRetrieval.service.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -12,11 +10,16 @@ import java.util.*;
 
 @Service
 public class BasicOpmp implements BasicOp {
-
     @Resource
     private StemmerMapper stemmermapper;
     @Resource
     private StopTermMapper stoptermmapper;
+    @Resource
+    private CountdouMapper countdoumapper;
+    @Resource
+    private BeforeIndexMapper beforeindexmapper;
+
+
 
     @Override
     public HashMap<String, ArrayList<String>> andOp(String stra, ArrayList<String> lista, String strb, ArrayList<String> listb) {
@@ -256,6 +259,7 @@ public class BasicOpmp implements BasicOp {
 
     @Override
     public ArrayList<lyricResults> multiNotAnd(String[] str) {
+
         ArrayList<StopTerm> stops=stoptermmapper.selectAll();
         ArrayList<String> stopterms=new ArrayList<String>();
 
@@ -320,6 +324,7 @@ public class BasicOpmp implements BasicOp {
 
     @Override
     public ArrayList<lyricResults> multiOp(String[] str) {
+        Stemmer stemmer=new Stemmer();
         ArrayList<StopTerm> stops=stoptermmapper.selectAll();
         ArrayList<String> stopterms=new ArrayList<String>();
         //停词表需要处理
@@ -385,30 +390,32 @@ public class BasicOpmp implements BasicOp {
 
 
                //成功取到ab，接下来判断是否需要查数据库
-                if(stopterms.contains(a)){
+                if(stopterms.contains(a.toUpperCase())){
                    lista=new ArrayList<String>();
                 }
                 else {
                     if (all.containsKey(a)) {
                         lista = all.get(a);
                     } else {
-                        list_a = stemmermapper.blurSelect(a.toUpperCase());
+                        list_a = stemmermapper.blurSelect(stemmer.getResult(a));
                         for (int i = 0; i < list_a.size(); i++) {
                             lista.add(list_a.get(i).getDoc());
                         }
                     }
                 }
-                if(stopterms.contains(b)){
+                if(stopterms.contains(b.toUpperCase())){
                     listb=new ArrayList<String>();
                 }
                 else {
                     if (all.containsKey(b)) {
                         listb = all.get(b);
                     } else {
-                        list_b = stemmermapper.blurSelect(b.toUpperCase());
-
+                        list_b = stemmermapper.blurSelect(stemmer.getResult(b));
                         for (int i = 0; i < list_b.size(); i++) {
-                            listb.add(list_b.get(i).getDoc());
+                            System.out.println(i);
+                            BeforeIndex temp = list_b.get(i);
+                            String temp2 = temp.getDoc();
+                            listb.add(temp2);
                         }
                     }
                 }
@@ -449,34 +456,107 @@ public class BasicOpmp implements BasicOp {
         return result;
     }
 
-    public static void main(String[] args){
-        BasicOpmp temp=new BasicOpmp();
-        ArrayList<String> a=new ArrayList<String>();
-        ArrayList<String> b=new ArrayList<String>();
-        a.add("1.1");
-        a.add("5.1");
+    @Override
+    public HashMap<String, Double> rankPLM(String[] str) {
 
-        b.add("5.1");
-       ;
-        System.out.println(temp.orOp("a",a,"b",b).get("ab|"));
-        HashMap<String,ArrayList<String>> all=new HashMap<String,ArrayList<String>>();
-        all.put("a",a);
-        all.put("b",b);
-        List<Map.Entry<String, ArrayList<String>>> list = new ArrayList<Map.Entry<String, ArrayList<String>>>(all.entrySet());
-
-
-// 然后通过比较器来实现排序
-        Collections.sort(list, new Comparator<Map.Entry<String, ArrayList<String>>>() {
-            @Override
-            public int compare(Map.Entry<String, ArrayList<String>> o1, Map.Entry<String, ArrayList<String>> o2) {
-                // return 0;  // 降序
-                // return o2.getValue().compareTo(o1.getValue()); // 降序
-                return o1.getValue().size()-o2.getValue().size(); // 升序
-            }
-        });
-
-        for (Map.Entry<String, ArrayList<String>> mapping : list) {
-            System.out.println(mapping.getKey() + ":" + mapping.getValue());
-        }
+        return null;
     }
+
+    @Override
+    public Double singleP(String doc,String[] query) {
+        ArrayList<Pair> bigram=new ArrayList<Pair>();
+        for(int i=1;i<query.length;i++){
+            Pair temp=new Pairmp();
+            temp.setWi1(query[i-1]);
+            temp.setWi(query[i]);
+            bigram.add(temp);
+        }
+
+        CountdouExample example = new CountdouExample();
+        CountdouExample.Criteria criteria = example.createCriteria();
+        criteria.andDocEqualTo(doc);
+        example.setOrderByClause("wi1 asc,wi asc");
+        List<Countdou> countlist = countdoumapper.selectByExample(example);
+        BeforeIndexExample singleexample = new BeforeIndexExample();
+        BeforeIndexExample.Criteria singlecriteria = singleexample.createCriteria();
+        singlecriteria.andDocEqualTo(doc);
+
+        List<BeforeIndex> singlelist = beforeindexmapper.selectByExample(singleexample);
+        ArrayList<Integer>  Nsingle=new ArrayList<Integer>();
+        ArrayList<Integer>  N=new ArrayList<Integer>();
+        for(int i=0;i<=query.length;i++){
+            N.add(0);
+        }
+        Comparator c = new Comparator<Pair>() {
+            @Override
+            public int compare(Pair o1, Pair o2) {
+                if(o1.getWi1().equals(o2.getWi1()))
+                return o1.getWi().compareTo(o2.getWi());
+                else
+                    return o1.getWi1().compareTo(o2.getWi1());
+            }
+        };
+        bigram.sort(c);
+
+        for(int i=0,j=0;i<bigram.size()&&j<countlist.size();){
+                if((bigram.get(i).getWi1().equals(countlist.get(j).getWi1()))&&(bigram.get(i).getWi().equals(countlist.get(j).getWi()))){
+                    int num=countlist.get(j).getFreq();
+                    N.set(num,N.get(num)+1);
+                    i++;
+                    j++;
+                }
+                else{
+                    if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))>0){
+                        j++;
+                    }
+                    if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))<0){
+                        N.set(0,N.get(0)+1);
+                        i++;
+                    }
+                    if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))==0){
+                        if((bigram.get(i).getWi1().compareTo(countlist.get(j).getWi1()))>0){
+                            j++;
+                        }
+                        else{
+                            N.set(0,N.get(0)+1);
+                            i++;
+                        }
+                    }
+                }
+        }
+
+
+        return null;
+    }
+
+//    public static void main(String[] args){
+//        BasicOpmp temp=new BasicOpmp();
+//        ArrayList<String> a=new ArrayList<String>();
+//        ArrayList<String> b=new ArrayList<String>();
+//        a.add("1.1");
+//        a.add("5.1");
+//
+//        b.add("5.1");
+//       ;
+//        System.out.println(temp.orOp("a",a,"b",b).get("ab|"));
+//        HashMap<String,ArrayList<String>> all=new HashMap<String,ArrayList<String>>();
+//        all.put("a",a);
+//        all.put("b",b);
+//        List<Map.Entry<String, ArrayList<String>>> list = new ArrayList<Map.Entry<String, ArrayList<String>>>(all.entrySet());
+//
+//
+//// 然后通过比较器来实现排序
+//        Collections.sort(list, new Comparator<Map.Entry<String, ArrayList<String>>>() {
+//            @Override
+//            public int compare(Map.Entry<String, ArrayList<String>> o1, Map.Entry<String, ArrayList<String>> o2) {
+//                // return 0;  // 降序
+//                // return o2.getValue().compareTo(o1.getValue()); // 降序
+//                return o1.getValue().size()-o2.getValue().size(); // 升序
+//            }
+//        });
+//
+//        for (Map.Entry<String, ArrayList<String>> mapping : list) {
+//            System.out.println(mapping.getKey() + ":" + mapping.getValue());
+//        }
+//    }
 }
