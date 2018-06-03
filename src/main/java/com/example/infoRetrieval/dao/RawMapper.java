@@ -3,6 +3,9 @@ package com.example.infoRetrieval.dao;
 import com.example.infoRetrieval.pojo.Raw;
 import com.example.infoRetrieval.pojo.RawExample;
 import java.util.List;
+
+import com.example.infoRetrieval.pojo.TermDoc;
+import com.example.infoRetrieval.pojo.TermFrequence;
 import org.apache.ibatis.annotations.Param;
 
 public interface RawMapper {
@@ -63,4 +66,9 @@ public interface RawMapper {
     int updateByExample(@Param("record") Raw record, @Param("example") RawExample example);
     List<Raw> getAll();
     List<Raw> selectByPrimary(@Param("key")String key);
+
+    int getDocCount();//获得文档总数
+    List<TermDoc> getDocNum(); //DF
+    List<TermFrequence> getTermFreq();//TF
+
 }
