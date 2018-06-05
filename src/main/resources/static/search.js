@@ -88,13 +88,18 @@ function showDocRank(data) {
     for (var i = 0; i < data.length; i += 3) {
         addf += '<div class="row">';
         for(var j = i; j < data.length && j < i + 3; j++) {
+
+            var lyric = data[j].lyric;
+            if (lyric.length > 200) {
+                lyric = lyric.substring(0, 100) +"...";
+            }
             addf += '<div class="col-lg-4">\n' +
                 '            <div class="features-icons-item mx-auto mb-5 mb-lg-0 mb-lg-3">\n' +
                 '<div class="features-icons-icon d-flex">\n' +
                 '                <i class="icon-layers m-auto text-primary"></i>\n' +
                 '              </div>'+
                 '              <h3>'+data[j].doc+'</h3>\n' +
-                '              <p class="lead mb-0">'+data[j].lyric+'</p>\n' +
+                '              <p class="lead mb-0">'+lyric+'</p>\n' +
                 '            </div>\n' +
                 '          </div>'
         }
