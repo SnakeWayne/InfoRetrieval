@@ -24,7 +24,7 @@ public class BasicOpmp implements BasicOp {
     private SmoothdouMapper smoothdoumapper;
 
 
-    //lista 文件列表
+
     @Override
     public HashMap<String, ArrayList<String>> andOp(String stra, ArrayList<String> lista, String strb, ArrayList<String> listb) {
         ArrayList<String> resultlist=new ArrayList<String>();
@@ -153,7 +153,7 @@ public class BasicOpmp implements BasicOp {
             if(stopterms.contains(term)){
                 continue;
             }
-           // ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
+//            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
 //            for(int i=0;i<list.size();i++){
 //                     temp.add(list.get(i).getDoc());
 //            }
@@ -217,7 +217,7 @@ public class BasicOpmp implements BasicOp {
             }
             ArrayList<String> temp=new ArrayList<String>();
 
-            //ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
+//            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
 //            for(int i=0;i<list.size();i++){
 //                temp.add(list.get(i).getDoc());
 //            }
@@ -282,7 +282,7 @@ public class BasicOpmp implements BasicOp {
             }
             ArrayList<String> temp=new ArrayList<String>();
 
-            //ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
+//            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
 //            for(int i=0;i<list.size();i++){
 //                temp.add(list.get(i).getDoc());
 //            }
@@ -401,11 +401,10 @@ public class BasicOpmp implements BasicOp {
                     if (all.containsKey(a)) {
                         lista = all.get(a);
                     } else {
-                        //list_a = stemmermapper.blurSelect(stemmer.getResult(a));
-                        lista= new ArrayList<String>();
-                        for (int i = 0; i < list_a.size(); i++) {
-                            lista.add(list_a.get(i).getDoc());
-                        }
+//                        list_a = stemmermapper.blurSelect(stemmer.getResult(a));
+//                        for (int i = 0; i < list_a.size(); i++) {
+//                            lista.add(list_a.get(i).getDoc());
+//                        }
                     }
                 }
                 if(stopterms.contains(b.toUpperCase())){
@@ -415,13 +414,13 @@ public class BasicOpmp implements BasicOp {
                     if (all.containsKey(b)) {
                         listb = all.get(b);
                     } else {
-                        //list_b = stemmermapper.blurSelect(stemmer.getResult(b));
-                        for (int i = 0; i < list_b.size(); i++) {
-                            System.out.println(i);
-                            BeforeIndex temp = list_b.get(i);
-                            String temp2 = temp.getDoc();
-                            listb.add(temp2);
-                        }
+//                        list_b = stemmermapper.blurSelect(stemmer.getResult(b));
+//                        for (int i = 0; i < list_b.size(); i++) {
+//                            System.out.println(i);
+//                            BeforeIndex temp = list_b.get(i);
+//                            String temp2 = temp.getDoc();
+//                            listb.add(temp2);
+//                        }
                     }
                 }
 
@@ -478,7 +477,9 @@ public class BasicOpmp implements BasicOp {
 
     @Override
     public Double singleP(String doc,String[] query) {
-
+        for(int i=0;i<query.length;i++){
+            query[i]=query[i].toUpperCase();
+        }
         ArrayList<Pair> bigram=new ArrayList<Pair>();
         for(int i=1;i<query.length;i++){
             Pair temp=new Pairmp();
@@ -499,26 +500,44 @@ public class BasicOpmp implements BasicOp {
 //        List<BeforeIndex> singlelist = beforeindexmapper.selectByExample(singleexample);
 //        ArrayList<Integer>  Nsingle=new ArrayList<Integer>();
 //        ArrayList<Integer>  N=new ArrayList<Integer>();
-
-        SmoothdouExample douexam=new SmoothdouExample();
-        SmoothdouExample.Criteria criteria=douexam.createCriteria();
-        criteria.andDocEqualTo(doc);
-        List<Smoothdou> doulist=smoothdoumapper.selectByExample(douexam);
-
-        SmoothsingleExample singlexam=new SmoothsingleExample();
-        SmoothsingleExample.Criteria criteria1=singlexam.createCriteria();
+//此版本为失败的平滑处理版本，出现的数值很怪异
+//        SmoothdouExample douexam=new SmoothdouExample();
+//        SmoothdouExample.Criteria criteria=douexam.createCriteria();
+//        criteria.andDocEqualTo(doc);
+//        List<Smoothdou> doulist=smoothdoumapper.selectByExample(douexam);
+//
+//        SmoothsingleExample singlexam=new SmoothsingleExample();
+//        SmoothsingleExample.Criteria criteria1=singlexam.createCriteria();
+//        criteria1.andDocEqualTo(doc);
+//        List<Smoothsingle> singlelist=smoothsinglemapper.selectByExample(singlexam);
+        BeforeIndexExample singlexam=new BeforeIndexExample();
+        BeforeIndexExample.Criteria criteria1=singlexam.createCriteria();
         criteria1.andDocEqualTo(doc);
-        List<Smoothsingle> singlelist=smoothsinglemapper.selectByExample(singlexam);
-        Double score=0.0;
+        List<BeforeIndex> singlelist=beforeindexmapper.selectByExample(singlexam);
+
+        CountdouExample   douexam=new CountdouExample();
+        CountdouExample.Criteria criteria=douexam.createCriteria();
+        criteria.andDocEqualTo(doc);
+        List<Countdou> doulist=countdoumapper.selectByExample(douexam);
+        Double score=1.0;
         for(int i=0;i<bigram.size();i++){
-                if(i==0){
+            if(i==0){
+                continue;
+                // score=score+Math.log(getsinglec(bigram.get(i).getWi1(),singlelist));
+            }
+            else{
+                double up=getdoublec(bigram.get(i),doulist);
+                double down=getsinglec(bigram.get(i).getWi1(),singlelist);
+                if(up==0||down==0){
+                    score=score*0;
                     continue;
-                    //score=score+Math.log(getsinglec(bigram.get(i).getWi1(),singlelist));
                 }
-                else{
-                    score=score+Math.log(getdoublec(bigram.get(i),doulist)/getsinglec(bigram.get(i).getWi1(),singlelist));
+                else {
+                    score = score *up / down;
                 }
+            }
         }
+
 
 
 //        for(int i=0;i<=query.length;i++){
@@ -567,7 +586,7 @@ public class BasicOpmp implements BasicOp {
     }
 
     @Override
-    public double getsinglec(String str, List<Smoothsingle> list) {
+    public double getsinglec(String str, List<BeforeIndex> list) {
         double nul=0;
         for(int i=0;i<list.size();i++){
             if(list.get(i).getTerm().equals(str)){
@@ -583,7 +602,7 @@ public class BasicOpmp implements BasicOp {
     }
 
     @Override
-    public double getdoublec(Pair pair, List<Smoothdou> list) {
+    public double getdoublec(Pair pair, List<Countdou> list) {
         double nul=0;
         for(int i=0;i<list.size();i++){
             if(list.get(i).getWi1().equals(pair.getWi1())&&list.get(i).getWi().equals(pair.getWi())){
@@ -599,6 +618,14 @@ public class BasicOpmp implements BasicOp {
     }
 
 //    public static void main(String[] args){
+//        BasicOpmp temp=new BasicOpmp();
+//        String[] str=new String[4];
+//        str[0]="DANCE";
+//        str[1]="WITH";
+//        str[2]="MY";
+//        str[3]="FATHER";
+//        temp.rankPLM(str);
+//    }
 //        BasicOpmp temp=new BasicOpmp();
 //        ArrayList<String> a=new ArrayList<String>();
 //        ArrayList<String> b=new ArrayList<String>();
