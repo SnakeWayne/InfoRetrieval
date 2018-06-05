@@ -162,10 +162,10 @@ public class BasicOpmp implements BasicOp {
             if(stopterms.contains(term)){
                 continue;
             }
-            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
-            for(int i=0;i<list.size();i++){
-                     temp.add(list.get(i).getDoc());
-            }
+//            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
+//            for(int i=0;i<list.size();i++){
+//                     temp.add(list.get(i).getDoc());
+//            }
             all.put(term,temp);
         }
 
@@ -226,10 +226,10 @@ public class BasicOpmp implements BasicOp {
             }
             ArrayList<String> temp=new ArrayList<String>();
 
-            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
-            for(int i=0;i<list.size();i++){
-                temp.add(list.get(i).getDoc());
-            }
+//            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
+//            for(int i=0;i<list.size();i++){
+//                temp.add(list.get(i).getDoc());
+//            }
             all.put(term,temp);
         }
 
@@ -291,10 +291,10 @@ public class BasicOpmp implements BasicOp {
             }
             ArrayList<String> temp=new ArrayList<String>();
 
-            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
-            for(int i=0;i<list.size();i++){
-                temp.add(list.get(i).getDoc());
-            }
+//            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
+//            for(int i=0;i<list.size();i++){
+//                temp.add(list.get(i).getDoc());
+//            }
             all.put(term,temp);
         }
 
@@ -410,10 +410,10 @@ public class BasicOpmp implements BasicOp {
                     if (all.containsKey(a)) {
                         lista = all.get(a);
                     } else {
-                        list_a = stemmermapper.blurSelect(stemmer.getResult(a));
-                        for (int i = 0; i < list_a.size(); i++) {
-                            lista.add(list_a.get(i).getDoc());
-                        }
+//                        list_a = stemmermapper.blurSelect(stemmer.getResult(a));
+//                        for (int i = 0; i < list_a.size(); i++) {
+//                            lista.add(list_a.get(i).getDoc());
+//                        }
                     }
                 }
                 if(stopterms.contains(b.toUpperCase())){
@@ -423,13 +423,13 @@ public class BasicOpmp implements BasicOp {
                     if (all.containsKey(b)) {
                         listb = all.get(b);
                     } else {
-                        list_b = stemmermapper.blurSelect(stemmer.getResult(b));
-                        for (int i = 0; i < list_b.size(); i++) {
-                            System.out.println(i);
-                            BeforeIndex temp = list_b.get(i);
-                            String temp2 = temp.getDoc();
-                            listb.add(temp2);
-                        }
+//                        list_b = stemmermapper.blurSelect(stemmer.getResult(b));
+//                        for (int i = 0; i < list_b.size(); i++) {
+//                            System.out.println(i);
+//                            BeforeIndex temp = list_b.get(i);
+//                            String temp2 = temp.getDoc();
+//                            listb.add(temp2);
+//                        }
                     }
                 }
 
@@ -493,7 +493,12 @@ public class BasicOpmp implements BasicOp {
             AExample aExample=new AExample();
             List<A> alist=aMapper.selectByExample(aExample);
             for(int i=0;i<alist.size();i++){
-                a.put(alist.get(i).getTerm(), Double.valueOf(alist.get(i).getA()));
+
+                A te = alist.get(i);
+                if (te == null)
+                    continue;
+                String temp = te.getTerm();
+                a.put(temp, Double.valueOf(alist.get(i).getA()));
             }
             GoodexistsingleExample goodexistsingleExample=new GoodexistsingleExample();
             List<Goodexistsingle> goodexistsingleList=goodexistsingleMapper.selectByExample(goodexistsingleExample);
