@@ -31,6 +31,7 @@ public class BasicOpmp implements BasicOp {
     HashMap<String,Double> a;
     HashMap<String,Double> goodexistsingle;
     HashMap<Pair,Double> goodexistdou;
+
     public BasicOpmp(){
         //一上来先进行初始化
        a=new HashMap<String,Double>();
