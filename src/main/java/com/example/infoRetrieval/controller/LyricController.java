@@ -144,7 +144,7 @@ public class LyricController {
 
             Map<String, String> lyrics = lyricsService.getLyrics();
 
-            HashMap<String, Double> plm = basicOpmp.rankPLM(searchToken);
+            HashMap<String, Double> plm = basicOpmp.goodrankPLM(searchToken);
             Iterator iter = plm.entrySet().iterator();
 
 
