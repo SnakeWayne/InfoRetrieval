@@ -32,30 +32,6 @@ public class BasicOpmp implements BasicOp {
     HashMap<String,Double> goodexistsingle;
     HashMap<Pair,Double> goodexistdou;
 
-    public BasicOpmp(){
-        //一上来先进行初始化
-       a=new HashMap<String,Double>();
-        goodexistsingle=new HashMap<String,Double>();
-        goodexistdou=new HashMap<Pair,Double>();
-        AExample aExample=new AExample();
-        List<A> alist=aMapper.selectByExample(aExample);
-        for(int i=0;i<alist.size();i++){
-            a.put(alist.get(i).getTerm(), Double.valueOf(alist.get(i).getA()));
-        }
-        GoodexistsingleExample goodexistsingleExample=new GoodexistsingleExample();
-        List<Goodexistsingle> goodexistsingleList=goodexistsingleMapper.selectByExample(goodexistsingleExample);
-        for(int i=0;i<goodexistsingleList.size();i++){
-            goodexistsingle.put(goodexistsingleList.get(i).getTerm(),Double.valueOf(goodexistsingleList.get(i).getP()));
-        }
-        GoodexistdouExample goodexistdouExample=new GoodexistdouExample();
-        List<Goodexistdou> goodexistdouList=goodexistdouMapper.selectByExample(goodexistdouExample);
-        for(int i=0;i<goodexistdouList.size();i++){
-            Pair pair=new Pairmp();
-            pair.setWi1(goodexistdouList.get(i).getWi1());
-            pair.setWi(goodexistdouList.get(i).getWi());
-            goodexistdou.put(pair, Double.valueOf(goodexistdouList.get(i).getP()));
-        }
-    }
 
 
     @Override
@@ -186,10 +162,10 @@ public class BasicOpmp implements BasicOp {
             if(stopterms.contains(term)){
                 continue;
             }
-//            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
-//            for(int i=0;i<list.size();i++){
-//                     temp.add(list.get(i).getDoc());
-//            }
+            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
+            for(int i=0;i<list.size();i++){
+                     temp.add(list.get(i).getDoc());
+            }
             all.put(term,temp);
         }
 
@@ -250,10 +226,10 @@ public class BasicOpmp implements BasicOp {
             }
             ArrayList<String> temp=new ArrayList<String>();
 
-//            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
-//            for(int i=0;i<list.size();i++){
-//                temp.add(list.get(i).getDoc());
-//            }
+            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
+            for(int i=0;i<list.size();i++){
+                temp.add(list.get(i).getDoc());
+            }
             all.put(term,temp);
         }
 
@@ -315,10 +291,10 @@ public class BasicOpmp implements BasicOp {
             }
             ArrayList<String> temp=new ArrayList<String>();
 
-//            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
-//            for(int i=0;i<list.size();i++){
-//                temp.add(list.get(i).getDoc());
-//            }
+            ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
+            for(int i=0;i<list.size();i++){
+                temp.add(list.get(i).getDoc());
+            }
             all.put(term,temp);
         }
 
@@ -434,10 +410,10 @@ public class BasicOpmp implements BasicOp {
                     if (all.containsKey(a)) {
                         lista = all.get(a);
                     } else {
-//                        list_a = stemmermapper.blurSelect(stemmer.getResult(a));
-//                        for (int i = 0; i < list_a.size(); i++) {
-//                            lista.add(list_a.get(i).getDoc());
-//                        }
+                        list_a = stemmermapper.blurSelect(stemmer.getResult(a));
+                        for (int i = 0; i < list_a.size(); i++) {
+                            lista.add(list_a.get(i).getDoc());
+                        }
                     }
                 }
                 if(stopterms.contains(b.toUpperCase())){
@@ -447,13 +423,13 @@ public class BasicOpmp implements BasicOp {
                     if (all.containsKey(b)) {
                         listb = all.get(b);
                     } else {
-//                        list_b = stemmermapper.blurSelect(stemmer.getResult(b));
-//                        for (int i = 0; i < list_b.size(); i++) {
-//                            System.out.println(i);
-//                            BeforeIndex temp = list_b.get(i);
-//                            String temp2 = temp.getDoc();
-//                            listb.add(temp2);
-//                        }
+                        list_b = stemmermapper.blurSelect(stemmer.getResult(b));
+                        for (int i = 0; i < list_b.size(); i++) {
+                            System.out.println(i);
+                            BeforeIndex temp = list_b.get(i);
+                            String temp2 = temp.getDoc();
+                            listb.add(temp2);
+                        }
                     }
                 }
 
@@ -510,6 +486,29 @@ public class BasicOpmp implements BasicOp {
 
     @Override
     public HashMap<String, Double> goodrankPLM(String[] str) {
+        if(a==null&&goodexistsingle==null&&goodexistdou==null){
+            a=new HashMap<String,Double>();
+            goodexistsingle=new HashMap<String,Double>();
+            goodexistdou=new HashMap<Pair,Double>();
+            AExample aExample=new AExample();
+            List<A> alist=aMapper.selectByExample(aExample);
+            for(int i=0;i<alist.size();i++){
+                a.put(alist.get(i).getTerm(), Double.valueOf(alist.get(i).getA()));
+            }
+            GoodexistsingleExample goodexistsingleExample=new GoodexistsingleExample();
+            List<Goodexistsingle> goodexistsingleList=goodexistsingleMapper.selectByExample(goodexistsingleExample);
+            for(int i=0;i<goodexistsingleList.size();i++){
+                goodexistsingle.put(goodexistsingleList.get(i).getTerm(),Double.valueOf(goodexistsingleList.get(i).getP()));
+            }
+            GoodexistdouExample goodexistdouExample=new GoodexistdouExample();
+            List<Goodexistdou> goodexistdouList=goodexistdouMapper.selectByExample(goodexistdouExample);
+            for(int i=0;i<goodexistdouList.size();i++){
+                Pair pair=new Pairmp();
+                pair.setWi1(goodexistdouList.get(i).getWi1());
+                pair.setWi(goodexistdouList.get(i).getWi());
+                goodexistdou.put(pair, Double.valueOf(goodexistdouList.get(i).getP()));
+            }
+        }
         HashMap<String, Double> result=new HashMap<String, Double>();
         BeforeIndexExample example = new BeforeIndexExample();
         List<BeforeIndex> doulist=beforeindexmapper.selectByExample(example);
