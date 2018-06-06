@@ -10,7 +10,7 @@
 
     <title>Infomation Retrieval @SEU</title>
     <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="wildCard.js"></script>
+    <script src="search.js"></script>
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -44,20 +44,23 @@
       <div class="container">
         <div class="row">
           <div class="col-xl-9 mx-auto">
-            <h3 class="mb-5">通配符比较，支持A*B, A*, *A, *A*</h3>
+            <h3 class="mb-5">请输入两个文本名，我们将计算两者的相似度！</h3>
           </div>
           <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
 
               <div class="form-row">
-                <div class="col-12 col-md-9 mb-2 mb-md-0">
-                  <input type="email" class="form-control form-control-lg" placeholder="请输入关键词" id="search-input">
+                <div class="col-12 col-md-4 mb-2 mb-md-0">
+                  <input type="text" class="form-control form-control-lg" placeholder="请输入关键词" id="search-input1">
+                </div>
+                <div class="col-12 col-md-4 mb-2 mb-md-0">
+                  <input type="text" class="form-control form-control-lg" placeholder="请输入关键词" id="search-input2">
                 </div>
                 <div class="col-12 col-md-3">
-                  <button type="button" class="btn btn-block btn-lg btn-primary" onclick="search()">Search！</button>
+                  <button type="button" class="btn btn-block btn-lg btn-primary" onclick="docSimilarity()">Search！</button>
                 </div>
               </div>
 
-            <div id="baseline"></div>
+
           </div>
         </div>
       </div>
@@ -66,6 +69,8 @@
     <!-- Icons Grid -->
     <section class="features-icons bg-light text-center" id="lyric">
       <div class="container">
+
+          <div id="baseline"></div>
       </div>
     </section>
 
@@ -95,23 +100,6 @@
             <p class="text-muted small mb-4 mb-lg-0">&copy; InfomationRetrieval@SEU 2018. All Rights Reserved.</p>
           </div>
           <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
-            <!--<ul class="list-inline mb-0">-->
-              <!--<li class="list-inline-item mr-3">-->
-                <!--<a href="#">-->
-                  <!--<i class="fa fa-facebook fa-2x fa-fw"></i>-->
-                <!--</a>-->
-              <!--</li>-->
-              <!--<li class="list-inline-item mr-3">-->
-                <!--<a href="#">-->
-                  <!--<i class="fa fa-twitter fa-2x fa-fw"></i>-->
-                <!--</a>-->
-              <!--</li>-->
-              <!--<li class="list-inline-item">-->
-                <!--<a href="#">-->
-                  <!--<i class="fa fa-instagram fa-2x fa-fw"></i>-->
-                <!--</a>-->
-              <!--</li>-->
-            <!--</ul>-->
           </div>
         </div>
       </div>

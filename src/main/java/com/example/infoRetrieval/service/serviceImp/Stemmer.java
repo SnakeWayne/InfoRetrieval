@@ -187,7 +187,7 @@ public class Stemmer
     }
 
    /* r(s) is used further down. */
-
+    //主要用来提取包含ing ed 的单词
     private final void r(String s) { if (m() > 0) setto(s); }
 
    /* step1() gets rid of plurals and -ed or -ing. e.g.

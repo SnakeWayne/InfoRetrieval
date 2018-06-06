@@ -10,7 +10,7 @@
 
     <title>Infomation Retrieval @SEU</title>
     <script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="wildCard.js"></script>
+    <script src="search.js"></script>
     <!-- Bootstrap core CSS -->
     <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
@@ -44,7 +44,7 @@
       <div class="container">
         <div class="row">
           <div class="col-xl-9 mx-auto">
-            <h3 class="mb-5">通配符比较，支持A*B, A*, *A, *A*</h3>
+            <h3 class="mb-5">请输入一段文本，我们将返回可能出现该文本的所有文档！</h3>
           </div>
           <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
 
@@ -53,7 +53,7 @@
                   <input type="email" class="form-control form-control-lg" placeholder="请输入关键词" id="search-input">
                 </div>
                 <div class="col-12 col-md-3">
-                  <button type="button" class="btn btn-block btn-lg btn-primary" onclick="search()">Search！</button>
+                  <button type="button" class="btn btn-block btn-lg btn-primary" onclick="docSearch()">Search！</button>
                 </div>
               </div>
 
@@ -66,9 +66,9 @@
     <!-- Icons Grid -->
     <section class="features-icons bg-light text-center" id="lyric">
       <div class="container">
+        <div id="resultsLine"></div>
       </div>
     </section>
-
 
     <!-- Footer -->
     <footer class="footer bg-light">
@@ -95,23 +95,7 @@
             <p class="text-muted small mb-4 mb-lg-0">&copy; InfomationRetrieval@SEU 2018. All Rights Reserved.</p>
           </div>
           <div class="col-lg-6 h-100 text-center text-lg-right my-auto">
-            <!--<ul class="list-inline mb-0">-->
-              <!--<li class="list-inline-item mr-3">-->
-                <!--<a href="#">-->
-                  <!--<i class="fa fa-facebook fa-2x fa-fw"></i>-->
-                <!--</a>-->
-              <!--</li>-->
-              <!--<li class="list-inline-item mr-3">-->
-                <!--<a href="#">-->
-                  <!--<i class="fa fa-twitter fa-2x fa-fw"></i>-->
-                <!--</a>-->
-              <!--</li>-->
-              <!--<li class="list-inline-item">-->
-                <!--<a href="#">-->
-                  <!--<i class="fa fa-instagram fa-2x fa-fw"></i>-->
-                <!--</a>-->
-              <!--</li>-->
-            <!--</ul>-->
+
           </div>
         </div>
       </div>

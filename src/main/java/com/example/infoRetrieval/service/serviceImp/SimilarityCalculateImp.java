@@ -154,7 +154,7 @@ public class SimilarityCalculateImp implements SimilarityCalculate {
         for (int i =0; i < ws1.size(); i++) {
             double w1 = ws1.get(i).getRes();
             String doc = ws1.get(i).getTerm();
-            //看是否第二个文档有这个词，有则计算，否则无需计算。对于第一个文档没有的词，无需计算。
+
             if (hm2.containsKey(doc)) {
                 inMultiply += w1 * hm2.get(doc);
             }
