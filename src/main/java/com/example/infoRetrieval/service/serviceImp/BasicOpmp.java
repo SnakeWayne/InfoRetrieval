@@ -48,10 +48,10 @@ public class BasicOpmp implements BasicOp {
 
             }
             else{
-                 if(lista.get(i).compareTo(listb.get(j))>0)
-                     j++;
-                 else
-                     i++;
+                if(lista.get(i).compareTo(listb.get(j))>0)
+                    j++;
+                else
+                    i++;
             }
 
         }
@@ -152,7 +152,7 @@ public class BasicOpmp implements BasicOp {
             stopterms.add(stops.get(i).getTerm());
         }
         ArrayList<lyricResults> result=new ArrayList<lyricResults>();
-       HashMap<String,ArrayList<String>> all=new HashMap<String,ArrayList<String>>();
+        HashMap<String,ArrayList<String>> all=new HashMap<String,ArrayList<String>>();
         for(String term:str){
 
             if(term.equals("&")){
@@ -164,7 +164,7 @@ public class BasicOpmp implements BasicOp {
             }
             ArrayList<BeforeIndex> list=stemmermapper.blurSelect(term.toUpperCase());
             for(int i=0;i<list.size();i++){
-                     temp.add(list.get(i).getDoc());
+                temp.add(list.get(i).getDoc());
             }
             all.put(term,temp);
         }
@@ -380,31 +380,31 @@ public class BasicOpmp implements BasicOp {
         ArrayList<BeforeIndex> list_a=new ArrayList<BeforeIndex>();
         ArrayList<BeforeIndex> list_b=new ArrayList<BeforeIndex>();
         int inicounter=0;
-       // Map.Entry<String, ArrayList<String>> tempentry=andOp(a,lista,b,listb).entrySet().iterator().next();
+        // Map.Entry<String, ArrayList<String>> tempentry=andOp(a,lista,b,listb).entrySet().iterator().next();
         for(String term:str){
             if(term.equals("&")||term.equals("|")){
                 boolean containnot=false;
                 a=strStack.pop();
-               if(a.equals("~")){
-                   containnot=true;
-                   //~ab
-                   b=strStack.pop();
-                   a=strStack.pop();
-               }
-               else{
-                   b=strStack.pop();
-                   if(b.equals("~")){
-                       //a~b
-                       containnot=true;
-                       b=strStack.pop();
-                   }
+                if(a.equals("~")){
+                    containnot=true;
+                    //~ab
+                    b=strStack.pop();
+                    a=strStack.pop();
+                }
+                else{
+                    b=strStack.pop();
+                    if(b.equals("~")){
+                        //a~b
+                        containnot=true;
+                        b=strStack.pop();
+                    }
 
-               }
+                }
 
 
-               //成功取到ab，接下来判断是否需要查数据库
+                //成功取到ab，接下来判断是否需要查数据库
                 if(stopterms.contains(a.toUpperCase())){
-                   lista=new ArrayList<String>();
+                    lista=new ArrayList<String>();
                 }
                 else {
                     if (all.containsKey(a)) {
@@ -434,7 +434,7 @@ public class BasicOpmp implements BasicOp {
                 }
 
 
-               //接下来判断是采用哪种操作;
+                //接下来判断是采用哪种操作;
                 if(containnot){
                     Map.Entry<String, ArrayList<String>> tempentry = notAndOp(a, lista, b, listb).entrySet().iterator().next();
                     for (int i = 0; i < tempentry.getValue().size(); i++) {
@@ -476,7 +476,7 @@ public class BasicOpmp implements BasicOp {
         List<BeforeIndex> doulist=beforeindexmapper.selectByExample(example);
         TreeSet<String> docnames=new TreeSet<String>();
         for(int i=0;i<doulist.size();i++){
-                docnames.add(doulist.get(i).getDoc());
+            docnames.add(doulist.get(i).getDoc());
         }
         for (String doc : docnames) {
             result.put(doc,singleP(doc,str));
@@ -493,6 +493,8 @@ public class BasicOpmp implements BasicOp {
             AExample aExample=new AExample();
             List<A> alist=aMapper.selectByExample(aExample);
             for(int i=0;i<alist.size();i++){
+                if(alist.get(i).getTerm()==null)
+                    continue;
                 a.put(alist.get(i).getTerm(), Double.valueOf(alist.get(i).getA()));
             }
             GoodexistsingleExample goodexistsingleExample=new GoodexistsingleExample();
@@ -564,17 +566,17 @@ public class BasicOpmp implements BasicOp {
         return score;
     }
     public double collectiondouP(HashMap<String,Double> a,HashMap<String,Double> goodexistsingle,HashMap<Pair,Double> goodexistdou,Pair pair){
-        double Pdou=0;
-        double Psingle=0;
+        Double Pdou=0.0;
+        Double Psingle=0.0;
         Pdou=goodexistdou.get(pair);
         Psingle=goodexistsingle.get(pair.getWi1());
-        if(Pdou!=0)
+        if(Pdou!=null)
             return Pdou;
 
-        if(Pdou==0&&Psingle!=0)
-                return a.get(pair.getWi1())*collectionsingleP(goodexistsingle,pair.getWi());
+        if(Pdou==null&&Psingle!=null)
+            return a.get(pair.getWi1())*collectionsingleP(goodexistsingle,pair.getWi());
 
-        if(Pdou==0&&Psingle==0)
+        if(Pdou==null&&Psingle==null)
             return collectionsingleP(goodexistsingle,pair.getWi());
 
 
@@ -636,21 +638,21 @@ public class BasicOpmp implements BasicOp {
         List<Countdou> doulist=countdoumapper.selectByExample(douexam);
         Double score=1.0;
         for(int i=0;i<bigram.size();i++){
-                if(i==0){
+            if(i==0){
+                continue;
+                // score=score+Math.log(getsinglec(bigram.get(i).getWi1(),singlelist));
+            }
+            else{
+                double up=getdoublec(bigram.get(i),doulist);
+                double down=getsinglec(bigram.get(i).getWi1(),singlelist);
+                if(up==0||down==0){
+                    score=score*0;
                     continue;
-                   // score=score+Math.log(getsinglec(bigram.get(i).getWi1(),singlelist));
                 }
-                else{
-                    double up=getdoublec(bigram.get(i),doulist);
-                    double down=getsinglec(bigram.get(i).getWi1(),singlelist);
-                    if(up==0||down==0){
-                        score=score*0;
-                        continue;
-                    }
-                    else {
-                        score = score *up / down;
-                    }
+                else {
+                    score = score *up / down;
                 }
+            }
         }
 
 
