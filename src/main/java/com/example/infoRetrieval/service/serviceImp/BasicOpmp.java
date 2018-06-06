@@ -31,30 +31,7 @@ public class BasicOpmp implements BasicOp {
     HashMap<String,Double> a;
     HashMap<String,Double> goodexistsingle;
     HashMap<Pair,Double> goodexistdou;
-    public BasicOpmp(){
-        //一上来先进行初始化
-       a=new HashMap<String,Double>();
-        goodexistsingle=new HashMap<String,Double>();
-        goodexistdou=new HashMap<Pair,Double>();
-        AExample aExample=new AExample();
-        List<A> alist=aMapper.selectByExample(aExample);
-        for(int i=0;i<alist.size();i++){
-            a.put(alist.get(i).getTerm(), Double.valueOf(alist.get(i).getA()));
-        }
-        GoodexistsingleExample goodexistsingleExample=new GoodexistsingleExample();
-        List<Goodexistsingle> goodexistsingleList=goodexistsingleMapper.selectByExample(goodexistsingleExample);
-        for(int i=0;i<goodexistsingleList.size();i++){
-            goodexistsingle.put(goodexistsingleList.get(i).getTerm(),Double.valueOf(goodexistsingleList.get(i).getP()));
-        }
-        GoodexistdouExample goodexistdouExample=new GoodexistdouExample();
-        List<Goodexistdou> goodexistdouList=goodexistdouMapper.selectByExample(goodexistdouExample);
-        for(int i=0;i<goodexistdouList.size();i++){
-            Pair pair=new Pairmp();
-            pair.setWi1(goodexistdouList.get(i).getWi1());
-            pair.setWi(goodexistdouList.get(i).getWi());
-            goodexistdou.put(pair, Double.valueOf(goodexistdouList.get(i).getP()));
-        }
-    }
+
 
 
     @Override
@@ -509,6 +486,29 @@ public class BasicOpmp implements BasicOp {
 
     @Override
     public HashMap<String, Double> goodrankPLM(String[] str) {
+        if(a==null&&goodexistsingle==null&&goodexistdou==null){
+            a=new HashMap<String,Double>();
+            goodexistsingle=new HashMap<String,Double>();
+            goodexistdou=new HashMap<Pair,Double>();
+            AExample aExample=new AExample();
+            List<A> alist=aMapper.selectByExample(aExample);
+            for(int i=0;i<alist.size();i++){
+                a.put(alist.get(i).getTerm(), Double.valueOf(alist.get(i).getA()));
+            }
+            GoodexistsingleExample goodexistsingleExample=new GoodexistsingleExample();
+            List<Goodexistsingle> goodexistsingleList=goodexistsingleMapper.selectByExample(goodexistsingleExample);
+            for(int i=0;i<goodexistsingleList.size();i++){
+                goodexistsingle.put(goodexistsingleList.get(i).getTerm(),Double.valueOf(goodexistsingleList.get(i).getP()));
+            }
+            GoodexistdouExample goodexistdouExample=new GoodexistdouExample();
+            List<Goodexistdou> goodexistdouList=goodexistdouMapper.selectByExample(goodexistdouExample);
+            for(int i=0;i<goodexistdouList.size();i++){
+                Pair pair=new Pairmp();
+                pair.setWi1(goodexistdouList.get(i).getWi1());
+                pair.setWi(goodexistdouList.get(i).getWi());
+                goodexistdou.put(pair, Double.valueOf(goodexistdouList.get(i).getP()));
+            }
+        }
         HashMap<String, Double> result=new HashMap<String, Double>();
         BeforeIndexExample example = new BeforeIndexExample();
         List<BeforeIndex> doulist=beforeindexmapper.selectByExample(example);
