@@ -15,6 +15,8 @@ public interface BasicOp {
     public ArrayList<lyricResults> multiNotAnd(String[] str);
     public ArrayList<lyricResults> multiOp(String[] str);
     public HashMap<String,Double> rankPLM(String[] str);
+    public HashMap<String,Double> goodrankPLM(String[] str);//本次新写的方法 调用一下
+    public Double goodsingleP(String doc,String[] query,HashMap<String,Double> a,HashMap<String,Double> goodexistsingle,HashMap<Pair,Double> goodexistdou);//内部方法
     public Double singleP(String doc,String[] query);//内部方法
    // public double getsinglec(String str, List<Smoothsingle> list);//内部方法
     //public double getdoublec(Pair pair, List<Smoothdou> list);//内部方法

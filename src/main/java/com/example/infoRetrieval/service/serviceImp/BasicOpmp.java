@@ -22,7 +22,39 @@ public class BasicOpmp implements BasicOp {
     private SmoothsingleMapper smoothsinglemapper;
     @Resource
     private SmoothdouMapper smoothdoumapper;
-
+    @Resource
+    private AMapper aMapper;
+    @Resource
+    private GoodexistdouMapper goodexistdouMapper;
+    @Resource
+    private GoodexistsingleMapper goodexistsingleMapper;
+    HashMap<String,Double> a;
+    HashMap<String,Double> goodexistsingle;
+    HashMap<Pair,Double> goodexistdou;
+    public BasicOpmp(){
+        //一上来先进行初始化
+       a=new HashMap<String,Double>();
+        goodexistsingle=new HashMap<String,Double>();
+        goodexistdou=new HashMap<Pair,Double>();
+        AExample aExample=new AExample();
+        List<A> alist=aMapper.selectByExample(aExample);
+        for(int i=0;i<alist.size();i++){
+            a.put(alist.get(i).getTerm(), Double.valueOf(alist.get(i).getA()));
+        }
+        GoodexistsingleExample goodexistsingleExample=new GoodexistsingleExample();
+        List<Goodexistsingle> goodexistsingleList=goodexistsingleMapper.selectByExample(goodexistsingleExample);
+        for(int i=0;i<goodexistsingleList.size();i++){
+            goodexistsingle.put(goodexistsingleList.get(i).getTerm(),Double.valueOf(goodexistsingleList.get(i).getP()));
+        }
+        GoodexistdouExample goodexistdouExample=new GoodexistdouExample();
+        List<Goodexistdou> goodexistdouList=goodexistdouMapper.selectByExample(goodexistdouExample);
+        for(int i=0;i<goodexistdouList.size();i++){
+            Pair pair=new Pairmp();
+            pair.setWi1(goodexistdouList.get(i).getWi1());
+            pair.setWi(goodexistdouList.get(i).getWi());
+            goodexistdou.put(pair, Double.valueOf(goodexistdouList.get(i).getP()));
+        }
+    }
 
 
     @Override
@@ -476,6 +508,89 @@ public class BasicOpmp implements BasicOp {
     }
 
     @Override
+    public HashMap<String, Double> goodrankPLM(String[] str) {
+        HashMap<String, Double> result=new HashMap<String, Double>();
+        BeforeIndexExample example = new BeforeIndexExample();
+        List<BeforeIndex> doulist=beforeindexmapper.selectByExample(example);
+        TreeSet<String> docnames=new TreeSet<String>();
+        for(int i=0;i<doulist.size();i++){
+            docnames.add(doulist.get(i).getDoc());
+        }
+        for (String doc : docnames) {
+            result.put(doc,goodsingleP(doc,str,a,goodexistsingle,goodexistdou));
+        }
+        return result;
+    }
+
+    @Override
+    public Double goodsingleP(String doc, String[] query,HashMap<String,Double> a,HashMap<String,Double> goodexistsingle,HashMap<Pair,Double> goodexistdou) {
+        for(int i=0;i<query.length;i++){
+            query[i]=query[i].toUpperCase();
+        }
+        ArrayList<Pair> bigram=new ArrayList<Pair>();
+        for(int i=1;i<query.length;i++){
+            Pair temp=new Pairmp();
+            temp.setWi1(query[i-1]);
+            temp.setWi(query[i]);
+            bigram.add(temp);
+        }
+        BeforeIndexExample singlexam=new BeforeIndexExample();
+        BeforeIndexExample.Criteria criteria1=singlexam.createCriteria();
+        criteria1.andDocEqualTo(doc);
+        List<BeforeIndex> singlelist=beforeindexmapper.selectByExample(singlexam);
+
+        CountdouExample   douexam=new CountdouExample();
+        CountdouExample.Criteria criteria=douexam.createCriteria();
+        criteria.andDocEqualTo(doc);
+        List<Countdou> doulist=countdoumapper.selectByExample(douexam);
+        Double score=1.0;
+        for(int i=0;i<bigram.size();i++){
+            if(i==0){
+                continue;
+                // score=score+Math.log(getsinglec(bigram.get(i).getWi1(),singlelist));
+            }
+            else{
+                double up=getdoublec(bigram.get(i),doulist);
+                double down=getsinglec(bigram.get(i).getWi1(),singlelist);
+                if(up==0||down==0){
+                    score=score*collectiondouP(a,goodexistsingle,goodexistdou,bigram.get(i));
+                    continue;
+                }
+                else {
+                    score = score *up / down;
+                }
+            }
+        }
+        return score;
+    }
+    public double collectiondouP(HashMap<String,Double> a,HashMap<String,Double> goodexistsingle,HashMap<Pair,Double> goodexistdou,Pair pair){
+        double Pdou=0;
+        double Psingle=0;
+        Pdou=goodexistdou.get(pair);
+        Psingle=goodexistsingle.get(pair.getWi1());
+        if(Pdou!=0)
+            return Pdou;
+
+        if(Pdou==0&&Psingle!=0)
+                return a.get(pair.getWi1())*collectionsingleP(goodexistsingle,pair.getWi());
+
+        if(Pdou==0&&Psingle==0)
+            return collectionsingleP(goodexistsingle,pair.getWi());
+
+
+        return 0.0;
+
+
+
+    }
+    public double collectionsingleP(HashMap<String,Double> goodexistsingle,String term){
+        if(goodexistsingle.get(term)!=null)
+            return goodexistsingle.get(term);
+        else
+            //为出现一次的单词个数，56082为总歌词次数，0.001为估计未包含的单词个数
+            return 894/56082*0.002;
+    }
+    @Override
     public Double singleP(String doc,String[] query) {
         for(int i=0;i<query.length;i++){
             query[i]=query[i].toUpperCase();
@@ -519,14 +634,22 @@ public class BasicOpmp implements BasicOp {
         CountdouExample.Criteria criteria=douexam.createCriteria();
         criteria.andDocEqualTo(doc);
         List<Countdou> doulist=countdoumapper.selectByExample(douexam);
-        Double score=0.0;
+        Double score=1.0;
         for(int i=0;i<bigram.size();i++){
                 if(i==0){
                     continue;
                    // score=score+Math.log(getsinglec(bigram.get(i).getWi1(),singlelist));
                 }
                 else{
-                    score=score+Math.log(getdoublec(bigram.get(i),doulist)/getsinglec(bigram.get(i).getWi1(),singlelist));
+                    double up=getdoublec(bigram.get(i),doulist);
+                    double down=getsinglec(bigram.get(i).getWi1(),singlelist);
+                    if(up==0||down==0){
+                        score=score*0;
+                        continue;
+                    }
+                    else {
+                        score = score *up / down;
+                    }
                 }
         }
 

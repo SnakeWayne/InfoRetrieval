@@ -29,6 +29,9 @@
         <table schema="db_ir" tableName="countdou"/>
         <table schema="db_ir" tableName="smoothsingle"/>
         <table schema="db_ir" tableName="smoothdou"/>
+        <table schema="db_ir" tableName="goodexistdou"/>
+        <table schema="db_ir" tableName="goodexistsingle"/>
+        <table schema="db_ir" tableName="a"/>
 
     </context>
 
